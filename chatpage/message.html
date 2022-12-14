@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>42 chat</title>
+    <style>
+      body { margin: 100; padding-bottom: 10rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+
+      #form { background: rgba(0, 0, 0, 0.15); padding: 0.50rem; position: fixed; bottom: 0; left: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(20px); }
+      #input { border: none; padding: 0 1rem; flex-grow: 5; border-radius: 6rem; margin: 0.12rem; }
+      #input2 { border: none; padding: 0 1rem; flex-grow: 5; border-radius: 6rem; margin: 0.12rem; }
+      #input:focus { outline: none; }
+      #form > button { background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages > li { padding: 0.5rem 1rem; }
+      #messages > li:nth-child(odd) { background: #d8d7d7; }
+    </style>
+  </head>
+  <body>
+    <ul id="messages"></ul>
+    <form id="form" action="">
+      <input id="input" autocomplete="off" /><button>Send</button>
+    </form>
+  </body>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io({transports: ['websocket'], transports: ["websocket", "polling"],upgrade: false});
+
+      var messages = document.getElementById('messages');
+      var form = document.getElementById('form');
+      var input = document.getElementById('input');
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (input.value) {
+          socket.emit('chat message', input.value);
+          input.value = '';
+        }
+      });
+
+      socket.on('chat message', function(msg) {
+        var item = document.createElement('li');
+        item.textContent = msg;
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+      socket.on('private', function(data) {
+        alert(data)
+      })
+    </script>
+</html>
